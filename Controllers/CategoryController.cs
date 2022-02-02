@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Shop.Controllers
 {
+
     [Route("v1/categories")]
     public class CategoryController : ControllerBase
     {
@@ -18,7 +19,7 @@ namespace Shop.Controllers
         [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Any, Duration = 30)]
         //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)] //Caso a configuração de Cache esteja na Startup, está linha desabilita o cache para este metodo 
         public async Task<ActionResult<List<Category>>> Get(
-            [FromServices]DataContext context
+            [FromServices] DataContext context
         )
         {
             var categories = await context.Categories.AsNoTracking().ToListAsync();
@@ -30,7 +31,7 @@ namespace Shop.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<Category>> GetById(
             Guid id,
-            [FromServices]DataContext context
+            [FromServices] DataContext context
         )
         {
             var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
@@ -39,13 +40,13 @@ namespace Shop.Controllers
 
         [HttpPost]
         [Route("")]
-        [Authorize(Roles ="employee")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Post(
-            [FromBody]Category model,
-            [FromServices]DataContext context
+            [FromBody] Category model,
+            [FromServices] DataContext context
         )
-        {       
-            if (!ModelState.IsValid) 
+        {
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
@@ -62,16 +63,16 @@ namespace Shop.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        [Authorize(Roles ="employee")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Put(
-            Guid id, 
-            [FromBody]Category model,
-            [FromServices]DataContext context
+            Guid id,
+            [FromBody] Category model,
+            [FromServices] DataContext context
         )
         {
             if (id != model.Id)
-            return NotFound(new { message = "Category not found"});
-            
+                return NotFound(new { message = "Category not found" });
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -83,25 +84,25 @@ namespace Shop.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                return BadRequest(new { message = "This register already was update"});
+                return BadRequest(new { message = "This register already was update" });
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Has not proved possible to update category"});
+                return BadRequest(new { message = "Has not proved possible to update category" });
             }
         }
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        [Authorize(Roles ="employee")]
+        [Authorize(Roles = "employee")]
         public async Task<ActionResult<Category>> Delete(
             Guid id,
-            [FromServices]DataContext context
+            [FromServices] DataContext context
         )
         {
             var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
             if (category == null)
-                return NotFound(new { message = "Category not found"});
+                return NotFound(new { message = "Category not found" });
 
             try
             {
@@ -111,7 +112,7 @@ namespace Shop.Controllers
             }
             catch (Exception)
             {
-                return BadRequest(new { message = "Has not proved possible to delete category"});
+                return BadRequest(new { message = "Has not proved possible to delete category" });
             }
         }
     }
